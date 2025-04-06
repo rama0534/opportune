@@ -4,20 +4,24 @@
     const listItems = document.querySelectorAll("ul.device-gray-100 > li.flex");
   
     listItems.forEach((li) => {
+      const anchor = li.querySelector('a[href*="/jobs/detail/"]');
+      const link = anchor?.href;
+      const id = link?.match(/\/detail\/([^?/]+)/)?.[1] || null;
       const title = li.querySelector("h3")?.innerText.trim() || "Unknown Title";
       const companyLocation = li.querySelector("p")?.innerText.trim() || "Unknown Company";
       const date = li.querySelectorAll("div")[1]?.innerText.trim() || "Unknown Date";
-  
-      jobs.push({
-        title,
-        companyLocation,
-        date,
-      });
+      if (title && companyLocation && id) { 
+        jobs.push({
+          id,
+          title,
+          companyLocation,
+          date,
+        });
+      }
     });
   
     console.log("Extracted Jobs:", jobs);
   
-    // Optional: Send to your Spring Boot backend
     fetch("http://localhost:8083/api/v1/info/bulk", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
